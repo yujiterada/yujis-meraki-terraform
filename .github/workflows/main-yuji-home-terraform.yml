@@ -5,8 +5,8 @@ on:
     branches:
       - 'main'
     paths:
-      - 'terraform-meraki-config/modules/**'  # Trigger on changes to the shared module
-      - 'terraform-meraki-config/prod/**'     # Trigger on changes to prod environments
+      - 'modules/**'  # Trigger on changes to the shared module
+      - 'prod/**'     # Trigger on changes to prod environments
   workflow_dispatch:
 
 jobs:
@@ -21,7 +21,7 @@ jobs:
     - name: Get all networks
       id: set-networks
       run: |
-        networks=$(ls -d terraform-meraki-config/prod/*/ | xargs -n 1 basename | jq -R -s -c 'split("\n")[:-1]')
+        networks=$(ls -d prod/*/ | xargs -n 1 basename | jq -R -s -c 'split("\n")[:-1]')
         echo "networks=$networks" >> $GITHUB_OUTPUT
   
   terraform:
@@ -43,10 +43,10 @@ jobs:
 
     - name: Terraform Init
       run: |
-        cd terraform-meraki-config/prod/${{ matrix.network }}
+        cd prod/${{ matrix.network }}
         terraform init -backend-config="access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -backend-config="secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
 
     - name: Terraform Apply
       run: |
-        cd terraform-meraki-config/prod/${{ matrix.network }}
+        cd prod/${{ matrix.network }}
         terraform apply -var="meraki_dashboard_api_key="${{ secrets.MERAKI_DASHBOARD_API_KEY }} -auto-approve
