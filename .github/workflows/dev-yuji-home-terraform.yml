@@ -1,0 +1,52 @@
+name: dev terraform plan
+
+on:
+  push:
+    branches:
+      - 'dev'
+    paths:
+      - 'terraform-meraki-config/modules/**'  # Trigger on changes to the shared module
+      - 'terraform-meraki-config/prod/**'     # Trigger on changes to prod environments
+  workflow_dispatch:
+
+jobs:
+  get-networks:
+    name: 'Get Networks'
+    runs-on: ubuntu-latest
+    outputs:
+      networks: ${{ steps.set-networks.outputs.networks }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Get all networks
+      id: set-networks
+      run: |
+        networks=$(ls -d terraform-meraki-config/prod/*/ | xargs -n 1 basename | jq -R -s -c 'split("\n")[:-1]')
+        echo "networks=$networks" >> $GITHUB_OUTPUT
+  
+  terraform:
+    name: 'Terraform'
+    needs: get-networks
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        network: ${{ fromJson(needs.get-networks.outputs.networks) }}
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 1.9.8  # Updated to a more recent version
+
+    - name: Terraform Init
+      run: |
+        cd terraform-meraki-config/prod/${{ matrix.network }}
+        terraform init -backend-config="access_key=${{ secrets.AWS_ACCESS_KEY_ID }}" -backend-config="secret_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+
+    - name: Terraform Plan
+      run: |
+        cd terraform-meraki-config/prod/${{ matrix.network }}
+        terraform plan -var="meraki_dashboard_api_key="${{ secrets.MERAKI_DASHBOARD_API_KEY }} -out=tfplan

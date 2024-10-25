@@ -35,3 +35,15 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+===
+
+# Don't ignore terraform.tfvars files
+!dev/*/terraform.tfvars
+!prod/*/terraform.tfvars
+
+# macOS file
+.DS_Store
+
+# Ignore package files
+*.pkg
