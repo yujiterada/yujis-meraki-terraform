@@ -64,8 +64,3 @@ module "open_ssid" {
   ssid_number     = var.ssid_open_number
   depends_on      = [module.appliance_vlans_multi_ipv4_only]
 }
-
-module "traffic_shaping_rules" {
-  source = "../../modules/meraki/appliance/traffic_shaping_rules/base"
-  network_id = local.network_id
-}
