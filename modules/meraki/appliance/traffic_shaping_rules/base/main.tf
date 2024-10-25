@@ -22,13 +22,6 @@ resource "meraki_networks_appliance_traffic_shaping_rules" "base" {
         {
           type = "application"
           value_obj = {
-            id   = "meraki:layer7/application/186"
-            name = "Line"
-          }
-        },
-        {
-          type = "application"
-          value_obj = {
             id   = "meraki:layer7/application/2469"
             name = "Facetime"
           }
