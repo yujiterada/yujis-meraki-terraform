@@ -17,6 +17,15 @@ output "vmx_instance_id" {
 
 output "vmx_instance_public_ip" {
   value = module.aws_vmx.public_ip
+}
+
+output "ubuntu_instance_id" {
+  value = module.aws_ubuntu.instance_id
+}
+
+output "ubuntu_private_ip" {
+  value = module.aws_ubuntu.private_ip
+}
 
 # # Output the AMI ID
 # output "ami_id" {
@@ -35,5 +44,3 @@ output "vmx_instance_public_ip" {
 #   description = "The description of the Marketplace AMI"
 #   value       = data.aws_ami.marketplace_vmx.description
 # }
-
-}
