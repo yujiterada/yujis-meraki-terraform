@@ -25,8 +25,13 @@ variable "security_group_name" {
   type        = string
 }
 
-variable "subnet_cidr_block" {
-  description = "CIDR block for the subnet within the VPC"
+variable "subnet_public_cidr_block" {
+  description = "CIDR block for the public subnet within the VPC"
+  type        = string
+}
+
+variable "subnet_private_cidr_block" {
+  description = "CIDR block for the private subnet within the VPC"
   type        = string
 }
 

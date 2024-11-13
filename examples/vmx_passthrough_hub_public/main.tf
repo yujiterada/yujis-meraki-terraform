@@ -7,7 +7,20 @@ module "aws_subnet_public" {
   source            = "../../modules/aws/subnet_public"
   vpc_id            = module.aws_vpc_igw.vpc_id
   igw_id            = module.aws_vpc_igw.igw_id
-  subnet_cidr_block = var.subnet_cidr_block
+  subnet_cidr_block = var.subnet_public_cidr_block
+}
+
+module "aws_natgw" {
+  source            = "../../modules/aws/natgw"
+  igw_id            = module.aws_vpc_igw.igw_id
+  public_subnet_id  = module.aws_subnet_public.id
+}
+
+module "aws_subnet_private" {
+  source            = "../../modules/aws/subnet_private"
+  vpc_id            = module.aws_vpc_igw.vpc_id
+  natgw_id          = module.aws_natgw.id
+  subnet_cidr_block = var.subnet_private_cidr_block
 }
 
 module "aws_vmx" {
@@ -37,6 +50,6 @@ module "meraki_passthrough_hub" {
 
 module "aws_ubuntu" {
   source           = "../../modules/aws/ubuntu"
-  subnet_id        = module.aws_subnet_public.id
+  subnet_id        = module.aws_subnet_private.id
   vpc_id           = module.aws_vpc_igw.vpc_id
 }
