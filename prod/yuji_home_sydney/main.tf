@@ -3,6 +3,7 @@ locals {
   rules      = local.rules_file.rules
 }
 
+# removing LINE from application rules
 module "traffic_shaping_rules" {
   source     = "../../modules/meraki/appliance/traffic_shaping_rules/base"
   network_id = var.network_id
